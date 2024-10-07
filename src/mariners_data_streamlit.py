@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import os
 # Import the necessary modules
 from mariners_interview.training_and_eval import load_model
 from mariners_interview.prediction import predict
@@ -42,6 +42,7 @@ def get_min_max_values(df, numeric_features):
         max_value = df[feature].max()
         min_max_values[feature] = (min_value, max_value)
     return min_max_values
+  
 
 # Section 1: Project Information
 def info_section():
@@ -484,7 +485,46 @@ def prediction_section():
         fig = visualize_hit_trajectory(input_data)
         st.pyplot(fig)
 
-# Section 3: Scouting Report Generator
+def display_saved_graphic(filename, directory, caption):
+    """
+    Display a saved graphic from a specified directory.
+
+    Parameters:
+    - filename: The name of the file to load and display.
+    - directory: The directory where the file is stored.
+    - caption: Caption to display with the image.
+    """
+    # Construct the full file path
+    filepath = os.path.join(directory, filename)
+    
+    # Check if file exists
+    if os.path.exists(filepath):
+        st.image(filepath, caption=caption)
+        st.write(f"Loaded graphic: {filename}")
+    else:
+        st.error(f"Graphic not found: {filepath}. Ensure the graphic has been pre-generated and saved in the directory.")
+
+# Function to display cluster analysis using only saved graphics
+def display_cluster_analysis_from_saved():
+    """
+    Display cluster analysis visualizations using only saved graphics.
+
+    Parameters:
+    - None. This function only loads from saved files.
+    """
+    st.subheader("Cluster Analysis Visualizations")
+
+    # Define the directory where graphics are saved
+    graphics_directory = '/data/Seattle Mariners 2025 Analytics Internship/graphics'
+
+    # Display saved graphics without the option to reload or generate new ones
+    display_saved_graphic("scatter_plot_kmeans_clusters.png", graphics_directory, caption="K-Means Clusters based on Defensive Stats")
+    display_saved_graphic("boxplot_reaction_speed_kmeans_clusters.png", graphics_directory, caption="Distribution of Reaction Speed Across K-Means Clusters")
+    display_saved_graphic("boxplot_distance_covered_kmeans_clusters.png", graphics_directory, caption="Distribution of Distance Covered Across K-Means Clusters")
+    display_saved_graphic("boxplot_catch_probability_kmeans_clusters.png", graphics_directory, caption="Distribution of Catch Probability Across K-Means Clusters")
+    display_saved_graphic("pairplot_defensive_features.png", graphics_directory, caption="Pairplot of Defensive Features by K-Means Clusters")
+
+# Scouting Report Section without Graph Regeneration
 def scouting_report_section():
     st.header("Scouting Report Generator")
     st.markdown("""
@@ -519,8 +559,8 @@ def scouting_report_section():
     # Perform feature engineering and clustering if the DataFrame is loaded successfully
     labeled_df = feature_engineering_with_cluster_analysis(preprocessed_df, debug=False)
 
-    # Display cluster analysis visualizations with caching options
-    display_cluster_analysis(labeled_df)
+    # Display cluster analysis using saved graphics
+    display_cluster_analysis_from_saved()
 
     # Add more context for interpretation if necessary
     st.markdown("""
@@ -564,10 +604,7 @@ def scouting_report_section():
         else:
             st.error(f"No data found for player with ID {player_id}.")
 
-    # Moved Reload and Recalculate Graphs checkbox to the bottom to avoid accidental changes
-    st.write("### Reload Options")
-    reload_graphs = st.checkbox("Reload and Recalculate Graphs", value=False)
-            
+
 # Section 3: Scouting Report Generator
 def mariners_improvements_section():
     st.header("Mariners Improvements")

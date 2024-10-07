@@ -143,15 +143,14 @@ def feature_engineering_with_cluster_analysis(df, debug=False):
 
 
 # Helper function to save or load figures
-def save_or_load_fig(fig, filename, directory, reload_graphs):
+def save_or_load_fig(fig, filename, directory):
     """
-    Save the figure if not already saved or reload if requested.
+    Save the figure if not already saved.
 
     Parameters:
     - fig: The figure object to save.
     - filename: The name of the file to save or load.
     - directory: The directory where the figure should be saved or loaded from.
-    - reload_graphs: Boolean to indicate whether to reload or use existing graphics.
     
     Returns:
     - The full path to the saved figure.
@@ -162,20 +161,22 @@ def save_or_load_fig(fig, filename, directory, reload_graphs):
     # Full path for the file
     filepath = os.path.join(directory, filename)
     
-    # Save figure or reload if requested
-    if reload_graphs or not os.path.exists(filepath):
+    # Save figure if not already saved
+    if not os.path.exists(filepath):
         st.write(f"Debug: Saving new figure as {filename} in {directory}.")
         fig.savefig(filepath, bbox_inches='tight')
     else:
         st.write(f"Debug: Loaded existing figure from {filepath}.")
     return filepath
-def display_cluster_analysis(data, reload_graphs=False):
+
+
+# Function to display cluster analysis with no reload options
+def display_cluster_analysis(data):
     """
-    Display cluster analysis visualizations with options to reload or use cached graphs.
+    Display cluster analysis visualizations using cached graphs only.
 
     Parameters:
     - data: The input DataFrame with necessary features for visualization.
-    - reload_graphs: Boolean to indicate whether to reload or use existing graphics.
     """
     st.subheader("Cluster Analysis Visualizations")
 
@@ -186,12 +187,13 @@ def display_cluster_analysis(data, reload_graphs=False):
     scatter_filename = "scatter_plot_kmeans_clusters.png"
     scatter_filepath = os.path.join(graphics_directory, scatter_filename)
 
-    if reload_graphs or not os.path.exists(scatter_filepath):
+    # Always load saved graphic or generate if not present
+    if not os.path.exists(scatter_filepath):
         st.write("Debug: Generating new scatter plot for K-Means Clusters...")
         fig, ax = plt.subplots()
         sns.scatterplot(x=data['reaction_speed'], y=data['distance_covered'], hue=data['defensive_cluster_kmeans'], palette='viridis', ax=ax)
         ax.set_title("K-Means Clusters based on Defensive Stats")
-        scatter_filepath = save_or_load_fig(fig, scatter_filename, graphics_directory, reload_graphs)
+        scatter_filepath = save_or_load_fig(fig, scatter_filename, graphics_directory)
         st.pyplot(fig)
     else:
         st.write("Debug: Loading scatter plot for K-Means Clusters from saved file.")
@@ -202,32 +204,32 @@ def display_cluster_analysis(data, reload_graphs=False):
         boxplot_filename = f"boxplot_{feature}_kmeans_clusters.png"
         boxplot_filepath = os.path.join(graphics_directory, boxplot_filename)
 
-        if reload_graphs or not os.path.exists(boxplot_filepath):
+        if not os.path.exists(boxplot_filepath):
             st.write(f"Debug: Generating new boxplot for {feature}...")
             fig, ax = plt.subplots()
             sns.boxplot(x='defensive_cluster_kmeans', y=feature, hue='defensive_cluster_kmeans', data=data, palette='Set2', ax=ax, legend=False)
             ax.set_title(f'Distribution of {feature} Across K-Means Clusters')
-            boxplot_filepath = save_or_load_fig(fig, boxplot_filename, graphics_directory, reload_graphs)
+            boxplot_filepath = save_or_load_fig(fig, boxplot_filename, graphics_directory)
             st.pyplot(fig)
         else:
             st.write(f"Debug: Loading boxplot for {feature} from saved file.")
             st.image(boxplot_filepath, caption=f'Distribution of {feature} Across K-Means Clusters')
 
-    # Option to show the pairplot, which is more resource-intensive
+    # Show Pairplot for Defensive Features
     pairplot_filename = "pairplot_defensive_features.png"
     pairplot_filepath = os.path.join(graphics_directory, pairplot_filename)
 
-    if reload_graphs or not os.path.exists(pairplot_filepath):
+    if not os.path.exists(pairplot_filepath):
         st.write("Debug: Generating new pairplot for Defensive Features...")
         with st.spinner("Generating Pairplot... This may take a while for large datasets."):
             fig = sns.pairplot(data, hue='defensive_cluster_kmeans', vars=['reaction_speed', 'distance_covered', 'catch_probability'], palette='viridis')
-            pairplot_filepath = save_or_load_fig(fig, pairplot_filename, graphics_directory, reload_graphs)
+            pairplot_filepath = save_or_load_fig(fig, pairplot_filename, graphics_directory)
             st.pyplot(fig)
     else:
         st.write("Debug: Loading pairplot for Defensive Features from saved file.")
         st.image(pairplot_filepath, caption='Pairplot of Defensive Features by K-Means Clusters')
 
-        
+
 
 # Example usage
 if __name__ == "__main__":
