@@ -1,0 +1,46 @@
+services:
+  datascience:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    runtime: nvidia
+    volumes:
+      - .:/workspace
+    ports:
+      - "8895:8888"  # Port mapping for Jupyter Notebook
+      - "6015:6006"  # Port mapping for TensorBoard
+      - "8015:8000"  # Port mapping for FastAPI
+      - "8515:8501"  # Port mapping for Streamlit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - ENV_NAME=data_science_baseball
+      - PYTHON_VER=3.10
+    command: ["conda", "run", "-n", "data_science_baseball", "jupyter", "lab", "--ip", "0.0.0.0", "--port", "8888", "--no-browser", "--allow-root"]
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    runtime: nvidia
+    volumes:
+      - .:/workspace
+    ports:
+      - "8000:8000"
+    command: ["conda", "run", "-n", "data_science_baseball", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    runtime: nvidia
+    volumes:
+      - .:/workspace
+    ports:
+      - "8501:8501"
+    command: ["conda", "run", "-n", "data_science_baseball", "streamlit", "run", "/workspace/your_streamlit_app.py", "--server.port", "8501", "--server.headless", "true"]
