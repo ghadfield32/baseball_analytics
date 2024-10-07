@@ -369,7 +369,8 @@ By analyzing the predictions:
     - Graphics showcasing the ballpark and hit distributions.
     - Input forms for user predictions.
 
-- **FastAPI App**: Serves the model predictions via an API endpoint.
+- **FastAPI App**: Serves
+the model predictions via an API endpoint.
 
   - **Features**:
 
@@ -534,7 +535,8 @@ Key Takeaways:
     Condition-Based Insights: The player's performance varies significantly under different game conditions such as temperature and pitch side, highlighting areas for potential improvement.
     Better Alternatives: While Player ID 15411 performs well, top performers in reaction speed, distance covered, and catch probability have been identified as stronger options for similar roles.
 
-# Future improvements: RISP inclusion in defenders situations, LLM rag bot I feed this report to in order to have an informed bot on the stats we need to have scouting reports and easy data analysis
+# Future improvements: 
+RISP inclusion in defenders situations, LLM rag bot I feed this report to in order to have an informed bot on the stats we need to have scouting reports and easy data analysis
 
 
 
