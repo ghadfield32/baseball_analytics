@@ -12,8 +12,8 @@ from mariners_interview.feature_engineering import calculate_physics_features, c
 from mariners_interview.player_scouting_report import generate_scouting_report
 
 # Define constants
-MODEL_PATH = '/workspaces/baseball_analytics/data/Seattle Mariners 2025 Analytics Internship/models/catboost_best.pkl'
-PREPROCESSED_DATA_PATH = '/workspaces/baseball_analytics/data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
+MODEL_PATH = 'baseball_analytics/data/Seattle Mariners 2025 Analytics Internship/models/catboost_best.pkl'
+PREPROCESSED_DATA_PATH = 'baseball_analytics/data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
 
 # Load the model
 model = load_model(MODEL_PATH)
@@ -75,7 +75,7 @@ The goal of this project is to predict the probability (p_airout) that a batted 
  **Evaluation**
  **Prediction and Analysis**
 
-
+# Project Summary: Minor Leage Outfielder Prediction of Airouts for the 2023 Season
 ---
 
 ## ** Preprocessing and Cleaning**
@@ -533,6 +533,11 @@ Key Takeaways:
     Consistency Across Metrics: Player ID 15411 demonstrates consistent performance across different metrics when compared to league averages. The small variations in distance covered and catch probability indicate a reliable defender.
     Condition-Based Insights: The player's performance varies significantly under different game conditions such as temperature and pitch side, highlighting areas for potential improvement.
     Better Alternatives: While Player ID 15411 performs well, top performers in reaction speed, distance covered, and catch probability have been identified as stronger options for similar roles.
+
+# Future improvements: RISP inclusion in defenders situations, LLM rag bot I feed this report to in order to have an informed bot on the stats we need to have scouting reports and easy data analysis
+
+
+
 """)
     st.subheader("Scout others Easier in the Report:")
     # Allow user to input player ID
