@@ -378,18 +378,18 @@ the model predictions via an API endpoint.
     - Accepts input data in JSON format and returns predictions.
 
 ## **Future Improvements: question 1 future improvements: 
-# park factors to it to get more or less runs scored or just the air density to make it easier
-# venue_id information to the actual venue measurements for foul ball checks and home run catchability to be exact
-# add in game factors to get: putouts leading to fielding percentage
-# more granular data for ultimate zone rating and Defensive runs saved
-# exact outfielder positions at the time of hit so we could get actual reaction speeds vs accelerations
-# log loss and roc by class to discover which are most important
+- park factors to it to get more or less runs scored or just the air density to make it easier
+- venue_id information to the actual venue measurements for foul ball checks and home run catchability to be exact
+- add in game factors to get: putouts leading to fielding percentage
+- more granular data for ultimate zone rating and Defensive runs saved
+- exact outfielder positions at the time of hit so we could get actual reaction speeds vs accelerations
+- log loss and roc by class to discover which are most important
 
 
 ---
 
 By meticulously explaining each step and decision, including visual aids and interactive elements, we provide a comprehensive understanding of the project. Users can not only see the final predictions but also grasp the underlying processes that led to them.
-
+ 
 If you have any questions or need further clarification on any section, feel free to ask!")
 
     """)
