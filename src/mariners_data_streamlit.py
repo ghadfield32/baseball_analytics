@@ -8,9 +8,10 @@ import seaborn as sns
 # Import the necessary modules
 from mariners_interview.training_and_eval import load_model
 from mariners_interview.prediction import predict
-from mariners_interview.cluster_analysis import feature_engineering_with_cluster_analysis, display_cluster_analysis
 from mariners_interview.feature_engineering import calculate_physics_features, calculate_hit_trajectory, visualize_hit_trajectory
+from mariners_interview.cluster_analysis import feature_engineering_with_cluster_analysis, display_cluster_analysis
 from mariners_interview.player_scouting_report import generate_scouting_report
+
 
 # Define constants
 MODEL_PATH = 'data/Seattle Mariners 2025 Analytics Internship/models/catboost_best.pkl'
@@ -507,32 +508,33 @@ def scouting_report_section():
     - **Cluster 2**: Late Reactors (Lower Reaction Speed, High Distance Covered)
     """)
 
-    # Load preprocessed data (adjust the path to your local data if necessary)
+    # Load preprocessed data (adjust the path as necessary)
     data_path = 'data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
-    preprocessed_df = pd.read_csv(data_path)
+    try:
+        preprocessed_df = pd.read_csv(data_path)
+    except FileNotFoundError:
+        st.error(f"Data file not found at: {data_path}")
+        return
 
-    # Perform feature engineering and clustering
+    # Perform feature engineering and clustering if the DataFrame is loaded successfully
     labeled_df = feature_engineering_with_cluster_analysis(preprocessed_df, debug=False)
 
-    # Display cluster analysis visualizations
-    st.subheader("Visualizations of K-Means Clustering Analysis")
+    # Display cluster analysis visualizations with caching options
     display_cluster_analysis(labeled_df)
-    
-    # Add more context if necessary
+
+    # Add more context for interpretation if necessary
     st.markdown("""
     ### Cluster Interpretation
     - **Cluster 0 (Quick Reactors)**: These players exhibit high reaction speeds, indicating they are quick to respond to batted balls.
     - **Cluster 1 (Moderate Defenders)**: This group has balanced attributes, suggesting they maintain a stable performance across all metrics.
     - **Cluster 2 (Late Reactors)**: Players in this cluster have lower reaction speeds but tend to cover more distance, possibly due to playing deeper positions.
-    
-    These insights can assist in understanding the defensive positioning and abilities of each player and serve as a basis for more refined scouting reports.
     """)
 
-    # Allow user to input player ID for a personalized scouting report
+    # Allow the user to input a player ID for a personalized scouting report
     st.subheader("Generate a Detailed Scouting Report")
     player_id = st.number_input("Enter Player ID:", min_value=0, value=15411)
 
-    # Option to select metrics and conditions
+    # Option to select metrics and conditions for analysis
     metrics_to_compare = st.multiselect(
         "Select Metrics to Compare:",
         options=['reaction_speed', 'distance_covered', 'catch_probability'],
@@ -545,15 +547,26 @@ def scouting_report_section():
         default=['temperature_category', 'bat_side', 'pitch_side']
     )
 
+    # Generate scouting report when the button is clicked
     if st.button("Generate Report"):
+        # Generate a detailed scouting report with the given player ID, metrics, and conditions
         report, league_comparison = generate_scouting_report(
             data_path, player_id, metrics=metrics_to_compare,
             condition_columns=condition_columns, debug=False
         )
+
+        # Display the report if generated successfully
         if report:
             st.markdown(report)
+            # Optionally display a table or additional visuals for the league comparison
+            if league_comparison is not None:
+                st.dataframe(league_comparison)
         else:
             st.error(f"No data found for player with ID {player_id}.")
+
+    # Moved Reload and Recalculate Graphs checkbox to the bottom to avoid accidental changes
+    st.write("### Reload Options")
+    reload_graphs = st.checkbox("Reload and Recalculate Graphs", value=False)
             
 # Section 3: Scouting Report Generator
 def mariners_improvements_section():
