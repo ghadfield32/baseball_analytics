@@ -152,7 +152,9 @@ def display_cluster_analysis(data):
     # Boxplot for each defensive feature by cluster
     for feature in ['reaction_speed', 'distance_covered', 'catch_probability']:
         fig, ax = plt.subplots()
-        sns.boxplot(x='defensive_cluster_kmeans', y=feature, data=data, palette='Set2', ax=ax)
+        # Update the boxplot to avoid the warning
+        sns.boxplot(x='defensive_cluster_kmeans', y=feature, hue='defensive_cluster_kmeans', data=data, palette='Set2', ax=ax, legend=False)
+
         ax.set_title(f'Distribution of {feature} Across K-Means Clusters')
         st.pyplot(fig)
         
