@@ -12,8 +12,8 @@ from mariners_interview.feature_engineering import calculate_physics_features, c
 from mariners_interview.player_scouting_report import generate_scouting_report
 
 # Define constants
-MODEL_PATH = 'baseball_analytics/data/Seattle Mariners 2025 Analytics Internship/models/catboost_best.pkl'
-PREPROCESSED_DATA_PATH = 'baseball_analytics/data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
+MODEL_PATH = 'data/Seattle Mariners 2025 Analytics Internship/models/catboost_best.pkl'
+PREPROCESSED_DATA_PATH = 'data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
 
 # Load the model
 model = load_model(MODEL_PATH)
