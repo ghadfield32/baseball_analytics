@@ -181,7 +181,7 @@ def display_cluster_analysis(data):
     st.subheader("Cluster Analysis Visualizations")
 
     # Define the directory to save/load the graphics
-    graphics_directory = '/data/Seattle Mariners 2025 Analytics Internship/graphics'
+    graphics_directory = 'data/Seattle Mariners 2025 Analytics Internship/graphics'
 
     # Show Scatter Plot of K-Means Clusters
     scatter_filename = "scatter_plot_kmeans_clusters.png"

@@ -508,14 +508,11 @@ def display_saved_graphic(filename, directory, caption):
 def display_cluster_analysis_from_saved():
     """
     Display cluster analysis visualizations using only saved graphics.
-
-    Parameters:
-    - None. This function only loads from saved files.
     """
     st.subheader("Cluster Analysis Visualizations")
 
     # Define the directory where graphics are saved
-    graphics_directory = '/data/Seattle Mariners 2025 Analytics Internship/graphics'
+    graphics_directory = 'data/Seattle Mariners 2025 Analytics Internship/graphics'
 
     # Display saved graphics without the option to reload or generate new ones
     display_saved_graphic("scatter_plot_kmeans_clusters.png", graphics_directory, caption="K-Means Clusters based on Defensive Stats")
@@ -550,14 +547,17 @@ def scouting_report_section():
 
     # Load preprocessed data (adjust the path as necessary)
     data_path = 'data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
+    
     try:
         preprocessed_df = pd.read_csv(data_path)
     except FileNotFoundError:
         st.error(f"Data file not found at: {data_path}")
         return
 
-    # Perform feature engineering and clustering if the DataFrame is loaded successfully
-    labeled_df = feature_engineering_with_cluster_analysis(preprocessed_df, debug=False)
+    player_metrics_df = preprocessed_df[['first_fielder', 'reaction_speed', 'distance_covered', 'catch_probability']]
+    
+    # Perform feature engineering and clustering: Uncomment if new data comes and we need to reload
+    # labeled_df = feature_engineering_with_cluster_analysis(preprocessed_df, debug=False)
 
     # Display cluster analysis using saved graphics
     display_cluster_analysis_from_saved()
