@@ -8,6 +8,7 @@ import seaborn as sns
 # Import the necessary modules
 from mariners_interview.training_and_eval import load_model
 from mariners_interview.prediction import predict
+from mariners_interview.cluster_analysis import feature_engineering_with_cluster_analysis, display_cluster_analysis
 from mariners_interview.feature_engineering import calculate_physics_features, calculate_hit_trajectory, visualize_hit_trajectory
 from mariners_interview.player_scouting_report import generate_scouting_report
 
@@ -369,7 +370,7 @@ By analyzing the predictions:
     - Graphics showcasing the ballpark and hit distributions.
     - Input forms for user predictions.
 
-- **FastAPI App**: Serves
+- **FastAPI App Option**: Serves
 the model predictions via an API endpoint.
 
   - **Features**:
@@ -384,6 +385,7 @@ the model predictions via an API endpoint.
 - more granular data for ultimate zone rating and Defensive runs saved
 - exact outfielder positions at the time of hit so we could get actual reaction speeds vs accelerations
 - log loss and roc by class to discover which are most important
+- FastAPI endpoint so we could have an endpoint to build off for future iterations
 
 
 ---
@@ -396,7 +398,14 @@ If you have any questions or need further clarification on any section, feel fre
 
 def prediction_section():
     st.header("Prediction Interface")
-    st.markdown("### Provide input values for the prediction model:")
+    st.markdown("""
+                ### Provide input values for the prediction model:
+                
+                Count Scenario info: Ball-Strike-Out-Inning_group
+                  * Inning group is 3< = Early, 3-7 Mid, 7> Late
+                  
+                  
+                """)
     
     # Load preprocessed data
     preprocessed_df = pd.read_csv(PREPROCESSED_DATA_PATH)
@@ -478,71 +487,49 @@ def prediction_section():
 def scouting_report_section():
     st.header("Scouting Report Generator")
     st.markdown("""
-                It is October 1 st , 2023, and with the conclusion of the Minor League season the Director of
-Player Development of the Seattle Mariners is interested in 15411’s outfield defense. Based on
-the data provided, and assuming all other things being equal, write a one-page report for a
-coaching audience breaking down this player’s defensive performance and abilities.
+    ## Scouting Report: Player Defensive Metrics and Clustering Analysis
+    
+    This section highlights the extraction of defensive metrics and their subsequent clustering using K-means analysis. The visualizations will help in understanding the performance of players based on their defensive capabilities.
+    
+    ### Defensive Metrics Extracted
+    The following defensive metrics were calculated:
+    
+    - **Reaction Speed**: The time it takes for a player to react to a batted ball.
+    - **Distance Covered**: The total distance traveled by the player while attempting a play.
+    - **Catch Probability**: The likelihood of successfully catching a ball based on its trajectory, speed, and other factors.
 
+    ### K-means Clustering Analysis
+    Using the extracted defensive metrics, we performed K-means clustering to identify groups of players with similar defensive abilities.
+    
+    #### Cluster Labels:
+    - **Cluster 0**: Quick Reactors (High Reaction Speed, Moderate Distance)
+    - **Cluster 1**: Moderate Defenders (Balanced across all metrics)
+    - **Cluster 2**: Late Reactors (Lower Reaction Speed, High Distance Covered)
+    """)
 
-# Answer:
-Scouting Report: Player ID 15411
+    # Load preprocessed data (adjust the path to your local data if necessary)
+    data_path = 'data/Seattle Mariners 2025 Analytics Internship/data-train-preprocessed.csv'
+    preprocessed_df = pd.read_csv(data_path)
 
-Player Overview:
-This report provides an in-depth analysis of the defensive performance of Player ID 15411, using advanced metrics and comparisons against the league averages and cluster groupings. Key metrics used include reaction speed, distance covered, and catch probability. Each metric is evaluated at an aggregate level and within specific game conditions.
-League Comparison Analysis:
-Metric	Player Average	League Average	Difference	Percent Difference	Player Percentile	League Percentile
-Reaction Speed	13.65	13.43	0.22	1.62%	50.15	50.00
-Distance Covered	83.11	82.38	0.73	0.89%	50.15	50.00
-Catch Probability	0.061	0.058	0.003	5.21%	50.15	50.00
+    # Perform feature engineering and clustering
+    labeled_df = feature_engineering_with_cluster_analysis(preprocessed_df, debug=False)
 
-Performance Highlights:
+    # Display cluster analysis visualizations
+    st.subheader("Visualizations of K-Means Clustering Analysis")
+    display_cluster_analysis(labeled_df)
+    
+    # Add more context if necessary
+    st.markdown("""
+    ### Cluster Interpretation
+    - **Cluster 0 (Quick Reactors)**: These players exhibit high reaction speeds, indicating they are quick to respond to batted balls.
+    - **Cluster 1 (Moderate Defenders)**: This group has balanced attributes, suggesting they maintain a stable performance across all metrics.
+    - **Cluster 2 (Late Reactors)**: Players in this cluster have lower reaction speeds but tend to cover more distance, possibly due to playing deeper positions.
+    
+    These insights can assist in understanding the defensive positioning and abilities of each player and serve as a basis for more refined scouting reports.
+    """)
 
-    Reaction Speed: The player's average reaction speed of 13.65 is slightly above the league average of 13.43, with a 1.62% difference, placing them in the 50th percentile for this metric.
-    Distance Covered: The player covers an average distance of 83.11, slightly higher than the league's average of 82.38, with a difference of 0.73. This results in a similar percentile ranking as reaction speed.
-    Catch Probability: The player's catch probability stands at 0.061, exceeding the league average of 0.058. This 5.21% increase signifies strong performance in difficult catch scenarios.
-
-Condition-Based Performance Analysis:
-
-1. Performance under Temperature Category: Moderate
-
-    Reaction Speed: Player Average: 14.19, League Average: 13.40, Difference: 0.79, Percent Difference: 5.89%
-    Distance Covered: Player Average: 82.46, League Average: 82.02, Difference: 0.44, Percent Difference: 0.54%
-    Catch Probability: Player Average: 0.06, League Average: 0.06, Difference: -0.00, Percent Difference: -0.56%
-
-2. Performance under Bat Side: Right
-
-    Reaction Speed: Player Average: 14.07, League Average: 13.40, Difference: 0.66, Percent Difference: 4.93%
-    Distance Covered: Player Average: 83.67, League Average: 82.07, Difference: 1.60, Percent Difference: 1.95%
-    Catch Probability: Player Average: 0.06, League Average: 0.06, Difference: 0.00, Percent Difference: 3.95%
-
-3. Performance under Pitch Side: Right
-
-    Reaction Speed: Player Average: 12.42, League Average: 13.34, Difference: -0.93, Percent Difference: -6.94%
-    Distance Covered: Player Average: 80.68, League Average: 82.09, Difference: -1.42, Percent Difference: -1.73%
-    Catch Probability: Player Average: 0.06, League Average: 0.06, Difference: 0.00, Percent Difference: 6.61%
-
-Top 5 Players by Metric Comparison
-Metric	Top 5 Players	Average Score
-Reaction Speed	Player 123, Player 456, Player 789, Player 321, Player 654	15.34
-Distance Covered	Player 234, Player 876, Player 543, Player 109, Player 345	98.12
-Catch Probability	Player 567, Player 432, Player 765, Player 890, Player 111	0.075
-Better Options:
-
-The top 5 players listed in each category showcase better performance in the respective metrics compared to Player ID 15411. For teams looking to improve their defensive capabilities, these players may present valuable alternatives depending on the desired skill set.
-Key Takeaways:
-
-    Consistency Across Metrics: Player ID 15411 demonstrates consistent performance across different metrics when compared to league averages. The small variations in distance covered and catch probability indicate a reliable defender.
-    Condition-Based Insights: The player's performance varies significantly under different game conditions such as temperature and pitch side, highlighting areas for potential improvement.
-    Better Alternatives: While Player ID 15411 performs well, top performers in reaction speed, distance covered, and catch probability have been identified as stronger options for similar roles.
-
-# Future improvements: 
-RISP inclusion in defenders situations, LLM rag bot I feed this report to in order to have an informed bot on the stats we need to have scouting reports and easy data analysis
-
-
-
-""")
-    st.subheader("Scout others Easier in the Report:")
-    # Allow user to input player ID
+    # Allow user to input player ID for a personalized scouting report
+    st.subheader("Generate a Detailed Scouting Report")
     player_id = st.number_input("Enter Player ID:", min_value=0, value=15411)
 
     # Option to select metrics and conditions
@@ -559,17 +546,15 @@ RISP inclusion in defenders situations, LLM rag bot I feed this report to in ord
     )
 
     if st.button("Generate Report"):
-        file_path = PREPROCESSED_DATA_PATH
         report, league_comparison = generate_scouting_report(
-            file_path, player_id, metrics=metrics_to_compare,
+            data_path, player_id, metrics=metrics_to_compare,
             condition_columns=condition_columns, debug=False
         )
         if report:
             st.markdown(report)
         else:
             st.error(f"No data found for player with ID {player_id}.")
-
-
+            
 # Section 3: Scouting Report Generator
 def mariners_improvements_section():
     st.header("Mariners Improvements")

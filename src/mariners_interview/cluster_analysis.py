@@ -8,6 +8,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from scipy.spatial.distance import cdist
+import streamlit as st
 
 # Define a function to create a preprocessor for numeric features
 def get_numeric_preprocessor(numeric_features, debug=False):
@@ -139,6 +140,23 @@ def feature_engineering_with_cluster_analysis(df, debug=False):
 
     return df
 
+
+def display_cluster_analysis(data):
+    st.subheader("Cluster Analysis Visualizations")
+    # Scatter plot for K-Means clusters
+    fig, ax = plt.subplots()
+    sns.scatterplot(x=data['reaction_speed'], y=data['distance_covered'], hue=data['defensive_cluster_kmeans'], palette='viridis', ax=ax)
+    ax.set_title("K-Means Clusters based on Defensive Stats")
+    st.pyplot(fig)
+
+    # Boxplot for each defensive feature by cluster
+    for feature in ['reaction_speed', 'distance_covered', 'catch_probability']:
+        fig, ax = plt.subplots()
+        sns.boxplot(x='defensive_cluster_kmeans', y=feature, data=data, palette='Set2', ax=ax)
+        ax.set_title(f'Distribution of {feature} Across K-Means Clusters')
+        st.pyplot(fig)
+        
+
 # Example usage
 if __name__ == "__main__":
     # Load preprocessed data (adjust the file path as needed)
@@ -148,6 +166,8 @@ if __name__ == "__main__":
     labeled_df = feature_engineering_with_cluster_analysis(pd.read_csv(file_path), debug=True)
     print("Labeled DataFrame Head:\n", labeled_df.head())
     print("Labeled DataFrame columns:\n", labeled_df.columns)
+    
+    display_cluster_analysis(pd.read_csv(file_path))
 
 # Analyze the clusters to find meaningful labels
 # For example:
