@@ -2,6 +2,8 @@
 
 This README provides a comprehensive guide to setting up a robust Docker environment for data science projects with GPU support. It includes detailed explanations and best practices to help you understand each component.
 
+Streamit app at: outfielder-machine-learning.streamlit.app
+
 ## Table of Contents
 - [GPU enabled Docker Image Template](#gpu-enabled-docker-image-template)
   - [Table of Contents](#table-of-contents)
